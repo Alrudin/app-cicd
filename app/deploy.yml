@@ -1,0 +1,3 @@
+targets:
+  - cluster_master
+  - search_head_deployer

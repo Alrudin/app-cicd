@@ -1,0 +1,11 @@
+splunk:
+  password: Splunk123!
+  idxc:
+    secret: splunk_idxc_secret
+    search_factor: 1
+    replication_factor: 1
+    replication_port: 9887
+  shc:
+    secret: splunk_shc_secret
+    replication_factor: 2
+    replication_port: 9887

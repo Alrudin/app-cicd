@@ -1,0 +1,49 @@
+stages:
+  - build
+  - test
+  - deploy
+
+build_app:
+  stage: build
+  image: alpine:latest
+  script:
+    - cd app
+    - tar -czvf ../app.tgz my_splunk_app/
+  artifacts:
+    paths:
+      - app.tgz
+
+test_app:
+  stage: test
+  image: python:3.11-slim
+  before_script:
+    - apt-get update && apt-get install -y libmagic1
+    - pip install splunk-appinspect
+  script:
+    - |
+      splunk-appinspect inspect app.tgz --mode precert --ci || EXIT_CODE=$?
+      if [ -n "$EXIT_CODE" ]; then
+        if [ "$EXIT_CODE" -eq 103 ] || [ "$EXIT_CODE" -eq 104 ]; then
+          echo "AppInspect reported warnings or future-failures. Ignoring..."
+          exit 0
+        else
+          echo "AppInspect reported failures or an error occurred. Failing pipeline."
+          exit "$EXIT_CODE"
+        fi
+      fi
+
+
+deploy_app:
+  stage: deploy
+  image: python:3.11-slim 
+  before_script:
+    - pip install ansible docker pyyaml
+    - ansible-galaxy collection install community.docker
+  script:
+    - |
+      # Parse the targets from deploy.yml
+      export TARGETS=$(python -c "import yaml; print(','.join(yaml.safe_load(open('app/deploy.yml'))['targets']))")
+      echo "Deploying to targets: $TARGETS"
+      # Execute Ansible playbook only against the defined targets
+      cd ansible
+      ansible-playbook -i inventory.ini deploy.yml --limit "$TARGETS"

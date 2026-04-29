@@ -1,0 +1,34 @@
+---
+- name: Deploy Splunk App to Cluster Master
+  hosts: cluster_master
+  gather_facts: false
+  become: true
+  tasks:
+    - name: Ensure app is extracted to master-apps
+      ansible.builtin.unarchive:
+        src: "{{ playbook_dir }}/../app.tgz"
+        dest: "/opt/splunk/etc/master-apps/"
+        owner: splunk
+        group: splunk
+
+    - name: Apply cluster bundle
+      ansible.builtin.command: /opt/splunk/bin/splunk apply cluster-bundle -auth admin:Splunk123! --answer-yes
+      register: apply_cluster
+      changed_when: apply_cluster.rc == 0
+
+- name: Deploy Splunk App to Search Head Deployer
+  hosts: search_head_deployer
+  gather_facts: false
+  become: true
+  tasks:
+    - name: Ensure app is extracted to shcluster apps
+      ansible.builtin.unarchive:
+        src: "{{ playbook_dir }}/../app.tgz"
+        dest: "/opt/splunk/etc/shcluster/apps/"
+        owner: splunk
+        group: splunk
+
+    - name: Apply shcluster bundle
+      ansible.builtin.command: /opt/splunk/bin/splunk apply shcluster-bundle -target https://splunk-sh1:8089 -auth admin:Splunk123! --answer-yes
+      register: apply_shcluster
+      changed_when: apply_shcluster.rc == 0
