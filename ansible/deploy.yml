@@ -3,6 +3,8 @@
   hosts: cluster_master
   gather_facts: false
   become: true
+  vars_files:
+    - ../default.yml
   tasks:
     - name: Ensure app is extracted to master-apps
       ansible.builtin.unarchive:
@@ -12,7 +14,7 @@
         group: splunk
 
     - name: Apply cluster bundle
-      ansible.builtin.command: /opt/splunk/bin/splunk apply cluster-bundle -auth admin:Splunk123! --answer-yes
+      ansible.builtin.command: /opt/splunk/bin/splunk apply cluster-bundle -auth admin:{{ splunk.password }} --answer-yes
       register: apply_cluster
       changed_when: apply_cluster.rc == 0
 
@@ -20,6 +22,8 @@
   hosts: search_head_deployer
   gather_facts: false
   become: true
+  vars_files:
+    - ../default.yml
   tasks:
     - name: Ensure app is extracted to shcluster apps
       ansible.builtin.unarchive:
@@ -29,6 +33,7 @@
         group: splunk
 
     - name: Apply shcluster bundle
-      ansible.builtin.command: /opt/splunk/bin/splunk apply shcluster-bundle -target https://splunk-sh1:8089 -auth admin:Splunk123! --answer-yes
+      ansible.builtin.command: /opt/splunk/bin/splunk apply shcluster-bundle -target https://splunk-sh1:8089 -auth admin:{{ splunk.password }} --answer-yes
       register: apply_shcluster
       changed_when: apply_shcluster.rc == 0
+

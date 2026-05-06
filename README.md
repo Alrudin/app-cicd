@@ -75,6 +75,32 @@ Once pushed, the GitLab runner will pick up the `.gitlab-ci.yml` file and automa
 - Run `splunk-appinspect` to validate the codebase.
 - Trigger Ansible to deploy the app bundle to your Dockerized Splunk Cluster Master and Search Head Deployer.
 
+## Security & Secret Management
+
+This project uses Ansible Vault and environment variables to secure sensitive data like Splunk passwords and cluster secrets.
+
+Before deploying to a real environment, you must replace the temporary encrypted strings with your actual secure passwords:
+
+1. **Create a Vault Password File**:
+   Create a `.vault_pass` file at the root of the repository containing your secure vault password. This file is ignored by Git.
+   ```bash
+   echo "YourSecureVaultPassword" > .vault_pass
+   ```
+
+2. **Encrypt Your Secrets**:
+   Use `ansible-vault encrypt_string` to encrypt your real Splunk password and secrets, then paste the generated blocks into `default.yml` replacing the existing `!vault | ...` entries.
+   ```bash
+   ansible-vault encrypt_string --vault-password-file .vault_pass 'YourRealPassword'
+   ```
+
+3. **Configure GitLab CI/CD**:
+   In your GitLab repository settings (Settings > CI/CD > Variables), add the following masked variables so the pipeline can decrypt and deploy:
+   - `ANSIBLE_VAULT_PASSWORD`: The contents of your `.vault_pass` file.
+   - `SPLUNK_PASSWORD`: The actual plaintext Splunk password (injected into `docker-compose` by the pipeline).
+
+4. **Local Testing**:
+   For local `docker-compose` testing, copy `.env.example` to `.env` and set `SPLUNK_PASSWORD=YourRealPassword`.
+
 ## Troubleshooting
 
 - **AppInspect Failures**: If the `test` stage fails, check the job logs. `splunk-appinspect` will output the exact issues you need to fix in your Splunk configurations (e.g., missing stanzas in `app.conf`).
