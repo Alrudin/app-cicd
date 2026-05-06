@@ -3,3 +3,6 @@ gitlab_logs/
 gitlab_data/
 gitlab_config/*
 Instructions.md
+.env
+.vault_pass
+.venv_ansible/

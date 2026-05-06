@@ -29,7 +29,7 @@ services:
     environment:
       - SPLUNK_START_ARGS=--accept-license
       - SPLUNK_GENERAL_TERMS=--accept-sgt-current-at-splunk-com
-      - SPLUNK_PASSWORD=Splunk123!
+      - SPLUNK_PASSWORD=${SPLUNK_PASSWORD}
       - SPLUNK_ROLE=splunk_cluster_master
     ports:
       - '8000:8000'
@@ -44,7 +44,7 @@ services:
     environment:
       - SPLUNK_START_ARGS=--accept-license
       - SPLUNK_GENERAL_TERMS=--accept-sgt-current-at-splunk-com
-      - SPLUNK_PASSWORD=Splunk123!
+      - SPLUNK_PASSWORD=${SPLUNK_PASSWORD}
       - SPLUNK_ROLE=splunk_indexer
       - SPLUNK_CLUSTER_MASTER_URL=splunk-cm
     depends_on:
@@ -59,7 +59,7 @@ services:
     environment:
       - SPLUNK_START_ARGS=--accept-license
       - SPLUNK_GENERAL_TERMS=--accept-sgt-current-at-splunk-com
-      - SPLUNK_PASSWORD=Splunk123!
+      - SPLUNK_PASSWORD=${SPLUNK_PASSWORD}
       - SPLUNK_ROLE=splunk_deployer
     ports:
       - '8001:8000'
@@ -73,7 +73,7 @@ services:
     environment:
       - SPLUNK_START_ARGS=--accept-license
       - SPLUNK_GENERAL_TERMS=--accept-sgt-current-at-splunk-com
-      - SPLUNK_PASSWORD=Splunk123!
+      - SPLUNK_PASSWORD=${SPLUNK_PASSWORD}
       - SPLUNK_ROLE=splunk_search_head
       - SPLUNK_DEPLOYER_URL=splunk-shd
       - SPLUNK_SEARCH_HEAD_URL=splunk-sh1,splunk-sh2,splunk-sh3
@@ -92,7 +92,7 @@ services:
     environment:
       - SPLUNK_START_ARGS=--accept-license
       - SPLUNK_GENERAL_TERMS=--accept-sgt-current-at-splunk-com
-      - SPLUNK_PASSWORD=Splunk123!
+      - SPLUNK_PASSWORD=${SPLUNK_PASSWORD}
       - SPLUNK_ROLE=splunk_search_head
       - SPLUNK_DEPLOYER_URL=splunk-shd
       - SPLUNK_SEARCH_HEAD_URL=splunk-sh1,splunk-sh2,splunk-sh3
@@ -111,7 +111,7 @@ services:
     environment:
       - SPLUNK_START_ARGS=--accept-license
       - SPLUNK_GENERAL_TERMS=--accept-sgt-current-at-splunk-com
-      - SPLUNK_PASSWORD=Splunk123!
+      - SPLUNK_PASSWORD=${SPLUNK_PASSWORD}
       - SPLUNK_ROLE=splunk_search_head
       - SPLUNK_DEPLOYER_URL=splunk-shd
       - SPLUNK_SEARCH_HEAD_URL=splunk-sh1,splunk-sh2,splunk-sh3
