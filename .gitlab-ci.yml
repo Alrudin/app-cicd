@@ -18,8 +18,9 @@ test_app:
   image: python:3.11-slim
   before_script:
     - apt-get update && apt-get install -y libmagic1
-    - pip install splunk-appinspect
+    - pip install splunk-appinspect kintyre-splunk-conf
   script:
+    - find app -name "*.conf" | xargs --no-run-if-empty ksconf check
     - |
       splunk-appinspect inspect app.tgz --mode precert --ci || EXIT_CODE=$?
       if [ -n "$EXIT_CODE" ]; then
