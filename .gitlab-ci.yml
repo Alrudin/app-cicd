@@ -47,5 +47,4 @@ deploy_app:
       echo "Deploying to targets: $TARGETS"
       # Execute Ansible playbook only against the defined targets
       cd ansible
-      echo "$ANSIBLE_VAULT_PASSWORD" > .vault_pass
-      ansible-playbook -i inventory.ini deploy.yml --limit "$TARGETS" --vault-password-file .vault_pass
+      ansible-playbook -i inventory.ini deploy.yml --limit "$TARGETS"

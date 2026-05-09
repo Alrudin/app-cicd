@@ -5,7 +5,5 @@ gitlab_config/*
 Instructions.md
 gitlab-runner-config/
 .venv_ansible/
-.env
-.env
 .vault_pass
-.venv_ansible/
+.env

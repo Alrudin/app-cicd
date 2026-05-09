@@ -30,6 +30,8 @@ services:
       - SPLUNK_START_ARGS=--accept-license
       - SPLUNK_GENERAL_TERMS=--accept-sgt-current-at-splunk-com
       - SPLUNK_PASSWORD=${SPLUNK_PASSWORD}
+      - SPLUNK_IDXC_SECRET=${SPLUNK_IDXC_SECRET}
+      - SPLUNK_SHC_SECRET=${SPLUNK_SHC_SECRET}
       - SPLUNK_ROLE=splunk_cluster_master
     ports:
       - '8000:8000'
@@ -45,6 +47,8 @@ services:
       - SPLUNK_START_ARGS=--accept-license
       - SPLUNK_GENERAL_TERMS=--accept-sgt-current-at-splunk-com
       - SPLUNK_PASSWORD=${SPLUNK_PASSWORD}
+      - SPLUNK_IDXC_SECRET=${SPLUNK_IDXC_SECRET}
+      - SPLUNK_SHC_SECRET=${SPLUNK_SHC_SECRET}
       - SPLUNK_ROLE=splunk_indexer
       - SPLUNK_CLUSTER_MASTER_URL=splunk-cm
     depends_on:
@@ -60,6 +64,8 @@ services:
       - SPLUNK_START_ARGS=--accept-license
       - SPLUNK_GENERAL_TERMS=--accept-sgt-current-at-splunk-com
       - SPLUNK_PASSWORD=${SPLUNK_PASSWORD}
+      - SPLUNK_IDXC_SECRET=${SPLUNK_IDXC_SECRET}
+      - SPLUNK_SHC_SECRET=${SPLUNK_SHC_SECRET}
       - SPLUNK_ROLE=splunk_deployer
     ports:
       - '8001:8000'
@@ -74,6 +80,8 @@ services:
       - SPLUNK_START_ARGS=--accept-license
       - SPLUNK_GENERAL_TERMS=--accept-sgt-current-at-splunk-com
       - SPLUNK_PASSWORD=${SPLUNK_PASSWORD}
+      - SPLUNK_IDXC_SECRET=${SPLUNK_IDXC_SECRET}
+      - SPLUNK_SHC_SECRET=${SPLUNK_SHC_SECRET}
       - SPLUNK_ROLE=splunk_search_head
       - SPLUNK_DEPLOYER_URL=splunk-shd
       - SPLUNK_SEARCH_HEAD_URL=splunk-sh1,splunk-sh2,splunk-sh3
@@ -93,6 +101,8 @@ services:
       - SPLUNK_START_ARGS=--accept-license
       - SPLUNK_GENERAL_TERMS=--accept-sgt-current-at-splunk-com
       - SPLUNK_PASSWORD=${SPLUNK_PASSWORD}
+      - SPLUNK_IDXC_SECRET=${SPLUNK_IDXC_SECRET}
+      - SPLUNK_SHC_SECRET=${SPLUNK_SHC_SECRET}
       - SPLUNK_ROLE=splunk_search_head
       - SPLUNK_DEPLOYER_URL=splunk-shd
       - SPLUNK_SEARCH_HEAD_URL=splunk-sh1,splunk-sh2,splunk-sh3
@@ -112,6 +122,8 @@ services:
       - SPLUNK_START_ARGS=--accept-license
       - SPLUNK_GENERAL_TERMS=--accept-sgt-current-at-splunk-com
       - SPLUNK_PASSWORD=${SPLUNK_PASSWORD}
+      - SPLUNK_IDXC_SECRET=${SPLUNK_IDXC_SECRET}
+      - SPLUNK_SHC_SECRET=${SPLUNK_SHC_SECRET}
       - SPLUNK_ROLE=splunk_search_head
       - SPLUNK_DEPLOYER_URL=splunk-shd
       - SPLUNK_SEARCH_HEAD_URL=splunk-sh1,splunk-sh2,splunk-sh3
