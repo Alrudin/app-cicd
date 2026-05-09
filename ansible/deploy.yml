@@ -32,8 +32,24 @@
         owner: splunk
         group: splunk
 
+    - name: Wait for Search Head Cluster to be ready
+      ansible.builtin.uri:
+        url: "{{ splunk.shc.target_url }}/services/shcluster/status?output_mode=json"
+        method: GET
+        user: admin
+        password: "{{ splunk.password }}"
+        validate_certs: false
+        return_content: true
+        status_code: 200
+      register: shc_status
+      until: >
+        shc_status.status == 200 and
+        ('"service_ready_flag": 1' in shc_status.content or 'captain' in shc_status.content)
+      retries: 30
+      delay: 10
+
     - name: Apply shcluster bundle
-      ansible.builtin.command: /opt/splunk/bin/splunk apply shcluster-bundle -target https://splunk-sh1:8089 -auth admin:{{ splunk.password }} --answer-yes
+      ansible.builtin.command: /opt/splunk/bin/splunk apply shcluster-bundle -target {{ splunk.shc.target_url }} -auth admin:{{ splunk.password }} --answer-yes
       register: apply_shcluster
       changed_when: apply_shcluster.rc == 0
 
