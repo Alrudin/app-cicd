@@ -7,5 +7,6 @@ splunk:
     replication_port: 9887
   shc:
     secret: "{{ lookup('env', 'SPLUNK_SHC_SECRET') }}"
+    target_url: "{{ lookup('env', 'SPLUNK_SHC_TARGET_URL') | default('https://splunk-sh1:8089', true) }}"
     replication_factor: 2
     replication_port: 9887

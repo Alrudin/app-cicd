@@ -1,0 +1,4 @@
+splunk:
+  password: "{{ lookup('env', 'SPLUNK_PASSWORD') }}"
+  shc:
+    target_url: "{{ lookup('env', 'SPLUNK_SHC_TARGET_URL') | default('https://splunk-sh1:8089', true) }}"
