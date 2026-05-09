@@ -9,40 +9,61 @@ This repository is a starter template for managing Splunk applications using Git
 - **Automated Deployment**: Pushes the application bundle directly to your Search Head Cluster (SHC) and Indexer Cluster Master using Ansible.
 - **Dynamic Configuration**: Easily limit deployments using `app/deploy.yml`.
 
-## Getting Started
+## Getting Started & Developer Workflow
 
-### 1. Clone & Rename the App
+### 1. Fork the Repository in GitLab
+1. Navigate to this repository in your GitLab instance.
+2. Click the **Fork** button in the top right corner.
+3. Select your personal namespace or target group to create your own copy of the template.
 
-1. Clone this repository locally.
-2. Rename the `app/template_app` folder to your application's actual name.
+### 2. Clone Your Fork Locally
+Open your terminal and clone your newly forked repository:
+```bash
+git clone https://gitlab.example.com/YOUR_USERNAME/splunk-app-template.git
+cd splunk-app-template
+```
+
+### 3. Create a New Branch
+Always create a new branch for your app modifications:
+```bash
+git checkout -b feature/my-new-splunk-app
+```
+
+### 4. Rename and Configure the App
+1. Rename the `app/template_app` folder to your application's actual name.
    ```bash
    mv app/template_app app/YOUR_APP_NAME
    ```
-3. Update `app/YOUR_APP_NAME/default/app.conf` to reflect your app's details.
+2. Update `app/YOUR_APP_NAME/default/app.conf` to reflect your app's details.
+3. Edit `app/deploy.yml` to specify whether you want to deploy to `cluster_master`, `search_head_deployer`, or both.
+4. Update `ansible/inventory.ini` with your actual Splunk environment hostnames or IPs.
 
-### 2. Configure Your Environment
+### 5. Add, Commit, and Push Your Changes
+Once you've customized the app and configured your targets, stage and commit your changes:
+```bash
+# Stage all changes
+git add .
 
-The CI/CD pipeline expects the following variables to be defined in your GitLab CI/CD settings (or your local `.env` file for local development/testing):
+# Commit with a descriptive message
+git commit -m "Initial setup for my new Splunk app"
 
+# Push the branch to your GitLab fork
+git push -u origin feature/my-new-splunk-app
+```
+
+### 6. Create a Merge Request
+1. Go to your repository in the GitLab UI. A banner will usually appear prompting you to **Create merge request**.
+2. Alternatively, navigate to **Merge requests** and click **New merge request**.
+3. Select `feature/my-new-splunk-app` as the source branch and `main` as the target branch.
+4. Fill in the title and description for your changes.
+5. In the **Reviewers** field on the right sidebar, select a team member to review your code.
+6. Click **Create merge request**.
+
+Once the reviewer approves and merges your code into the `main` branch, the `.gitlab-ci.yml` pipeline will automatically trigger to package, test, and deploy your app.
+
+## CI/CD Environment Variables
+The automated pipeline expects the following variables to be defined in your GitLab project's CI/CD settings (Settings > CI/CD > Variables):
 - `SPLUNK_PASSWORD`: The admin password for your Splunk environment.
 - `SPLUNK_SHC_TARGET_URL`: The URL of your Search Head Cluster Captain (e.g., `https://splunk-sh1:8089`).
 
-You can copy `.env.example` to `.env` locally to configure these for testing.
-
-### 3. Update the Ansible Inventory
-
-Update `ansible/inventory.ini` with the actual hostnames or IP addresses of your Splunk Cluster Master and Search Head Deployer. If you're not deploying via Docker, ensure you change the `ansible_connection` to SSH and provide appropriate credentials.
-
-### 4. Target Specific Components
-
-By default, the pipeline deploys to the targets specified in `app/deploy.yml`. Edit this file to specify whether you want to deploy to `cluster_master`, `search_head_deployer`, or both.
-
-```yaml
-targets:
-  - cluster_master
-  - search_head_deployer
-```
-
-### 5. Commit and Push
-
-Once you've customized the app and configured your variables, simply commit your changes and push to GitLab. The `.gitlab-ci.yml` pipeline will automatically package your app, test it, and deploy it to the specified targets.
+*(Note: You can copy `.env.example` to `.env` to configure these variables for local testing.)*
