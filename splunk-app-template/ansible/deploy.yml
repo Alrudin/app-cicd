@@ -1,0 +1,55 @@
+---
+- name: Deploy Splunk App to Cluster Master
+  hosts: cluster_master
+  gather_facts: false
+  become: true
+  vars_files:
+    - ../default.yml
+  tasks:
+    - name: Ensure app is extracted to master-apps
+      ansible.builtin.unarchive:
+        src: "{{ playbook_dir }}/../app.tgz"
+        dest: "/opt/splunk/etc/master-apps/"
+        owner: splunk
+        group: splunk
+
+    - name: Apply cluster bundle
+      ansible.builtin.command: /opt/splunk/bin/splunk apply cluster-bundle -auth admin:{{ splunk.password }} --answer-yes
+      register: apply_cluster
+      changed_when: apply_cluster.rc == 0
+
+- name: Deploy Splunk App to Search Head Deployer
+  hosts: search_head_deployer
+  gather_facts: false
+  become: true
+  vars_files:
+    - ../default.yml
+  tasks:
+    - name: Ensure app is extracted to shcluster apps
+      ansible.builtin.unarchive:
+        src: "{{ playbook_dir }}/../app.tgz"
+        dest: "/opt/splunk/etc/shcluster/apps/"
+        owner: splunk
+        group: splunk
+
+    - name: Wait for Search Head Cluster to be ready
+      ansible.builtin.uri:
+        url: "{{ splunk.shc.target_url }}/services/shcluster/status?output_mode=json"
+        method: GET
+        user: admin
+        password: "{{ splunk.password }}"
+        validate_certs: false
+        return_content: true
+        status_code: 200
+      register: shc_status
+      until: >
+        shc_status.status == 200 and
+        ('"service_ready_flag": 1' in shc_status.content or 'captain' in shc_status.content)
+      retries: 30
+      delay: 10
+
+    - name: Apply shcluster bundle
+      ansible.builtin.command: /opt/splunk/bin/splunk apply shcluster-bundle -target {{ splunk.shc.target_url }} -auth admin:{{ splunk.password }} --answer-yes
+      register: apply_shcluster
+      changed_when: apply_shcluster.rc == 0
+
